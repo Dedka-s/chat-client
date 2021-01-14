@@ -14,6 +14,7 @@ public class ClientImpl {
     @SneakyThrows
     public void start () {
         Socket socket = new Socket(HOST,PORT);
+        Socket socket2 = new Socket(HOST,PORT);
         System.out.println("I'm connected");
 
         BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
@@ -23,7 +24,7 @@ public class ClientImpl {
         new Thread(new ServerRunnable(socket)).start();
 
         authorization(consoleReader,socketWriter);
-             
+        checkAuthorization(socket2);
 
                  while (true){
                      socketWriter.println(consoleReader.readLine());
@@ -44,6 +45,17 @@ public class ClientImpl {
         socketWriter.flush();
     }
 
+    @SneakyThrows
+    private void checkAuthorization (Socket socket){
+        BufferedReader serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        String socketInputMessage = serverReader.readLine();
+        while (socketInputMessage != null){
+            if (socketInputMessage.equals("Вы успешно авторизовались")){
+                System.out.println("Успешно");
+                break;
+            }
+        }
+    }
 
     }
 
